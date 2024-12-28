@@ -1,0 +1,29 @@
+name: Send Email
+
+on:
+  workflow_dispatch: # Cho phép kích hoạt thủ công từ giao diện GitHub Actions.
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Email
+        uses: dawidd6/action-send-mail@v4
+        with:
+          # Thông tin kết nối đến SMTP Server
+          connection_url: ${{ secrets.MAIL_CONNECTION }}
+          # Chủ đề email
+          subject: Notification from GitHub Actions
+          # Địa chỉ người nhận
+          to: loojc0811@gmail.com
+          # Địa chỉ người gửi (hiển thị trong email)
+          from: nhloc08@gmail.com # <your_email@example.com>
+          # Nội dung email
+          body: |
+            Hello,
+
+            This is a test email sent from GitHub Actions.
+
+            Best regards,
+            GitHub Actions.
