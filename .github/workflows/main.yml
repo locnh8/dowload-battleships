@@ -26,9 +26,6 @@ jobs:
           # Server port for SSL (465)
           server_port: 465
 
-          # Set secure to true for SSL encryption
-          secure: true
-
           # Optional mail server username (use Gmail address)
           username: ${{ secrets.MAIL_USERNAME }}
 
