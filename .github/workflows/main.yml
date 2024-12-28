@@ -25,6 +25,8 @@ jobs:
 
           # Server port for SSL (465)
           server_port: 465
+          ignore_cert: true
+          secure: true
 
           # Optional mail server username (use Gmail address)
           username: ${{ secrets.MAIL_USERNAME }}
@@ -43,4 +45,3 @@ jobs:
 
           # Optional plain body
           body: "Build job of ${{ github.repository }} completed successfully!"
-          ignore_cert: true
