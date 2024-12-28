@@ -18,7 +18,7 @@ jobs:
           # Địa chỉ người nhận
           to: loojc0811@gmail.com
           # Địa chỉ người gửi (hiển thị trong email)
-          from: nhloc08@gmail.com # <your_email@example.com>
+          from: Rclone.yml# <your_email@example.com>
           # Nội dung email
           body: |
             Hello,
