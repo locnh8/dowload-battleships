@@ -15,7 +15,7 @@ jobs:
           rclone_config: ${{ secrets.RCLONE_CONFIG }}
       - name: Sync with Rclone
         run: |
-          rclone sync main:Docs backup:Docs --verbose | tee rclone_log.txt
+          rclone sync main_viethoangprobie: backup_sinhvien: --verbose | tee rclone_log.txt
           echo "Rclone sync completed!"
       - name: Upload log artifact
         uses: actions/upload-artifact@v3
@@ -51,9 +51,9 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Backup results
-          to: nhloc08@gmail.com
+          to: hoangvuive250106@gmail.com
           from: Nguyen Hoang Loc
           body: |
             Backup process completed.
-            Sê attched log for details.
-          attachments: rclone_log.
+            See attached log for details.
+          attachments: rclone_log.txt
