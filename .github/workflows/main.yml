@@ -1,15 +1,36 @@
-name: Send Email on Success
+name: Rclone Sync
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '0 19 * * 2'
   workflow_dispatch:
 
 jobs:
+  rclone_sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rclone
+        uses: AnimMouse/setup-rclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}          
+      - run: |
+          rclone sync main:Docs backup:Docs \
+            --log-file=rclone-log.txt \
+            --log-level INFO
+      - name: File update status
+        id: analyze_log
+        run: |
+          echo "Rclone Backup Report" > report.txt
+          echo " " >> report.txt
+          echo "Files successfully synced:" >> report.txt
+          grep "INFO  :" rclone-log.txt | grep "Copied" >> report.txt || echo "No files synced." >> report.txt
+          echo "" >> report.txt
+          echo "Errors during sync:" >> report.txt
+          grep "ERROR :" rclone-log.txt >> report.txt || echo "No errors found." >> report.txt
+      
   send_email:
     runs-on: ubuntu-latest
-
+    needs: rclone_sync
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,13 +44,8 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "Github Actions job result"
-
-          # Required recipients' addresses
+          subject: Backup results
           to: nhloc08@gmail.com
-
-          # Required sender full name (address can be skipped)
           from: Nguyen Hoang Loc
-
-          # Optional plain body
-          body: "Build job of ${{ github.repository }} completed successfully!"
+          body: |
+            $(cat report.txt)
