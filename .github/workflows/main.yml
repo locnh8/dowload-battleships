@@ -13,32 +13,25 @@ jobs:
         uses: AnimMouse/setup-rclone@v1
         with:
           rclone_config: ${{ secrets.RCLONE_CONFIG }}
-      - run: |
-          rclone sync main:Docs backup:Docs \
-          --log-file=rclone-log.txt \
-          --log-level INFO
-
-      - name: Run Rclone and generate report
+      - name: Sync with Rclone
         run: |
-          LOG_CONTENT=""
-          LOG_CONTENT+="Rclone Backup Report\n\n"
-          LOG_CONTENT+="Files successfully synced:\n"
-          SYNCED_FILES=$(grep "INFO  :" rclone-log.txt | grep "Copied" || echo "No files synced.")
-          LOG_CONTENT+="$SYNCED_FILES\n\n"
-          LOG_CONTENT+="Errors during sync:\n"
-          ERRORS=$(grep "ERROR :" rclone-log.txt || echo "No errors found.")
-          LOG_CONTENT+="$ERRORS"
-          echo "RCLONE_REPORT<<EOF" >> $GITHUB_ENV
-          echo -e "$LOG_CONTENT" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Debug Rclone Report
-        run: echo "${{ env.RCLONE_REPORT }}"
+          rclone sync main:Docs backup:Docs --verbose | tee rclone_log.txt
+          echo "Rclone sync completed!"
+      - name: Upload log artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: rclone-log
+          path: rclone_log.txt
         
   send_email:
     runs-on: ubuntu-latest
     needs: rclone_sync
     steps:
+      - name: Download log artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: rclone-log
+          path: .
       - name: Send mail
         uses: dawidd6/action-send-mail@v4
         with:
@@ -52,4 +45,6 @@ jobs:
           to: nhloc08@gmail.com
           from: Nguyen Hoang Loc
           body: |
-            ${{ env.RCLONE_REPORT }}
+            Backup process completed.
+            Logs:
+            $(cat rclone_log.txt)
