@@ -32,6 +32,15 @@ jobs:
         with:
           name: rclone-log
           path: .
+
+      - name: Read log into variable
+        id: read_log
+        run: |
+          LOG_CONTENT=$(cat rclone_log.txt)
+          echo "LOG_CONTENT<<EOF" >> $GITHUB_ENV
+          echo "$LOG_CONTENT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Send mail
         uses: dawidd6/action-send-mail@v4
         with:
@@ -47,4 +56,4 @@ jobs:
           body: |
             Backup process completed.
             Logs:
-            $(cat rclone_log.txt)
+            ${{ env.LOG_CONTENT }}
