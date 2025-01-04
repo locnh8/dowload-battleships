@@ -12,34 +12,29 @@ jobs:
       - name: Setup Rclone
         uses: AnimMouse/setup-rclone@v1
         with:
-          rclone_config: ${{ secrets.RCLONE_CONFIG }}          
-      - run: |
-          rclone sync main:Docs backup:Docs \
-            --log-file=rclone-log.txt \
-            --log-level INFO
-      - name: File update status
-        id: analyze_log
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+
+      - name: Run Rclone and generate report
         run: |
-          echo "Rclone Backup Report" > report.txt
-          echo " " >> report.txt
-          echo "Files successfully synced:" >> report.txt
-          grep "INFO  :" rclone-log.txt | grep "Copied" >> report.txt || echo "No files synced." >> report.txt
-          echo "" >> report.txt
-          echo "Errors during sync:" >> report.txt
-          grep "ERROR :" rclone-log.txt >> report.txt || echo "No errors found." >> report.txt
-      - name: Save report content to environment variable
-        run: |
+          LOG_CONTENT=""
+          LOG_CONTENT+="Rclone Backup Report\n\n"
+          LOG_CONTENT+="Files successfully synced:\n"
+          SYNCED_FILES=$(grep "INFO  :" rclone-log.txt | grep "Copied" || echo "No files synced.")
+          LOG_CONTENT+="$SYNCED_FILES\n\n"
+          LOG_CONTENT+="Errors during sync:\n"
+          ERRORS=$(grep "ERROR :" rclone-log.txt || echo "No errors found.")
+          LOG_CONTENT+="$ERRORS"
           echo "RCLONE_REPORT<<EOF" >> $GITHUB_ENV
-          cat report.txt >> $GITHUB_ENV
+          echo -e "$LOG_CONTENT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+
+      - name: Debug Rclone Report
+        run: echo "${{ env.RCLONE_REPORT }}"
         
   send_email:
     runs-on: ubuntu-latest
     needs: rclone_sync
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Send mail
         uses: dawidd6/action-send-mail@v4
         with:
@@ -52,4 +47,5 @@ jobs:
           subject: Backup results
           to: nhloc08@gmail.com
           from: Nguyen Hoang Loc
-          body: ${{ env.RCLONE_REPORT }}
+          body: |
+            ${{ env.RCLONE_REPORT }}
