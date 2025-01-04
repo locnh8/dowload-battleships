@@ -50,4 +50,4 @@ jobs:
           body: |
             Backup process completed.
             See attached log for details.
-          attachments: rclone_log.txt
+          attachments: report.txt
