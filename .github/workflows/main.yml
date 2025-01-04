@@ -14,7 +14,7 @@ jobs:
         with:
           rclone_config: ${{ secrets.RCLONE_CONFIG }}          
       - run: |
-          rclone sync main:Docs backup:Docs \
+          rclone sync main_viethoangprobie: backup_sinhvien: \
             --log-file=rclone-log.txt \
             --log-level INFO
       - name: File update status
