@@ -28,7 +28,10 @@ jobs:
           echo "Errors during sync:" >> report.txt
           grep "ERROR :" rclone-log.txt >> report.txt || echo "No errors found." >> report.txt
       - name: Save report content to environment variable
-        run: echo "RCLONE_REPORT=$(cat report.txt)" >> $GITHUB_ENV
+        run: |
+          echo "RCLONE_REPORT<<EOF" >> $GITHUB_ENV
+          cat report.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
         
   send_email:
     runs-on: ubuntu-latest
