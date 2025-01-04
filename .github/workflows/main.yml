@@ -55,5 +55,5 @@ jobs:
           from: Nguyen Hoang Loc
           body: |
             Backup process completed.
-            Logs:
-            ${{ env.LOG_CONTENT }}
+            Sê attched log for details.
+          attachments: rclone_log.
