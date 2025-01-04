@@ -52,4 +52,4 @@ jobs:
           subject: Backup results
           to: nhloc08@gmail.com
           from: Nguyen Hoang Loc
-          body: ${{ env.REPORT_CONTENT }}
+          body: ${{ env.RCLONE_REPORT }}
