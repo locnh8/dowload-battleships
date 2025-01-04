@@ -13,6 +13,10 @@ jobs:
         uses: AnimMouse/setup-rclone@v1
         with:
           rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      - run: |
+          rclone sync main:Docs backup:Docs \
+          --log-file=rclone-log.txt \
+          --log-level INFO
 
       - name: Run Rclone and generate report
         run: |
