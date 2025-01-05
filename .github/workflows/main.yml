@@ -53,11 +53,11 @@ jobs:
           server_port: 465
           ignore_cert: true
           secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
+          username: ${{ secrets.GMAIL_USER }}
+          password: ${{ secrets.GMAIL_APPWRD }}
           subject: Backup results
-          to: hoangvuive250106@gmail.com
-          from: Nguyen Hoang Loc
+          to: ${{ secrets.EMAIL_RECIPIENT }}
+          from: UIT-Learning-Archive
           body: |
             Backup process completed.
             See attached log for details.
